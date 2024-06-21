@@ -1,6 +1,6 @@
 // next.config.js
 
-module.exports = {
+const nextConfig = {
   reactStrictMode: false,
 
   async headers() {
@@ -18,3 +18,5 @@ module.exports = {
     ];
   },
 };
+
+module.exports = nextConfig;
