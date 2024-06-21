@@ -5,7 +5,7 @@ import axios from "axios";
 
 export const ProductsData = async()=>{
     try {
-        let prodData = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/Products`)
+        let prodData = await axios.get(`https://ecomerce-etym88vq2-ahmeds-projects-c046b778.vercel.app/api/Products`)
         return prodData
     } catch (error) {
         console.log(error);
