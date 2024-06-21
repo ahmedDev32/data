@@ -1,8 +1,24 @@
 import Users from "@/Models/UserModels";
-import bcrypt from "bcrypt"
+import bcrypt from "bcrypt";
 import connectDb from "@/middleware/db";
 
 const handler = async (req, res) => {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  );
+
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
+  // Handle actual requests
   try {
     const { email, password } = req.body;
 
@@ -15,9 +31,8 @@ const handler = async (req, res) => {
     }
 
     // Check password
-    let checkpassword = await bcrypt.compare(password,user.password)
-    console.log(user.password,password);
-    if (checkpassword) {
+    let checkPassword = await bcrypt.compare(password, user.password);
+    if (checkPassword) {
       // Passwords match, login successful
       return res.status(200).json({ msg: "Login successful", success: true });
     } else {
