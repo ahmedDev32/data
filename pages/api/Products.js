@@ -2,8 +2,8 @@ import fs from "fs/promises"; // Use the promise-based version of fs
 import ProductsModel from "../../Models/PostProduct";
 
 let handler = async (req, res) => {
-    // Set CORS headers
-    res.setHeader('Access-Control-Allow-Origin', 'https://ecomerce-kappa.vercel.app');
+    // Set CORS headers to allow all origins
+    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
@@ -15,15 +15,14 @@ let handler = async (req, res) => {
     try {
         // Uncomment the database fetch if needed
         // let getData_db = await ProductsModel.find({});
-        // console.log(getData_db)
+        // console.log(getData_db);
         
         // Read the JSON file asynchronously
         let data = await fs.readFile("./Models/products.json", "utf-8");
         let Ordata = JSON.parse(data);
         let parsePros = Ordata.reverse();
         
-        // Fetch data from the database if needed
-        
+        // Filter out duplicate entries based on `id`
         let seen = new Set();
         let parsePro = parsePros.filter((item) => {
             let foundData = item.id;
@@ -33,8 +32,6 @@ let handler = async (req, res) => {
             }
             return false;
         });
-
-        // Combine data from JSON file and database
 
         return res.status(200).json({ parsePro });
     } catch (err) {
