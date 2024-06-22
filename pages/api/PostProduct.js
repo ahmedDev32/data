@@ -52,6 +52,7 @@ const handler = async (req, res) => {
 
     return res.status(200).json({ success: true, msg: 'Product Posted', newProduct });
   } catch (error) {
+    res.json({req.body})
     console.error('Error:', error);
     return res.status(500).json({ success: false, msg: 'Internal Error, Try Again Later' });
   }
