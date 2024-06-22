@@ -1,9 +1,10 @@
 import fs from 'fs/promises';
 import path from 'path';
+import Products from '@/Models/PostProduct'; // Adjust the import path based on your actual model location
 
 const setCorsHeaders = (res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins (adjust as needed)
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader(
     'Access-Control-Allow-Headers',
@@ -30,19 +31,23 @@ const handler = async (req, res) => {
 
     const { name, imageUrl, price, description, category } = req.body;
 
-    let {name,imageUrl,price,description,category} = req.body
-        let newProduct = new Products({
-            name,imageUrl,price:`$${price}`,description,category,id:name
-        })
-        // let data = await fs.readFile("./Models/products.json","utf-8")
-        // let products = JSON.parse(data)
-        // products.push(newProduct)
-        // await fs.writeFile("./Models/products.json",JSON.stringify(products,null,2))
-        await newProduct.save()
-        return res.status(200).json({success:true,msg:"Product Posted",newProduct})
+    // Create a new instance of Products model
+    const newProduct = new Products({
+      name,
+      imageUrl,
+      price: `$${price}`, // Assuming you want to prepend $ to price
+      description,
+      category,
+      id: name // Assuming 'name' is unique and you want to use it as 'id'
+    });
+
+    // Save the product to the database
+    await newProduct.save();
+
+    return res.status(200).json({ success: true, msg: 'Product Posted', newProduct });
   } catch (error) {
     console.error('Error:', error);
-    return res.status(500).json({ success: false, msg: 'Internal Error, Try Again Later', body: req.body });
+    return res.status(500).json({ success: false, msg: 'Internal Error, Try Again Later', error: error.message });
   }
 };
 
