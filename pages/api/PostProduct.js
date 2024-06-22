@@ -13,6 +13,11 @@ let handler = async(req,res)=>{
       'Access-Control-Allow-Headers',
       'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
     );
+        // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+      res.status(200).end();
+      return;
+    }
         let {name,imageUrl,price,description,category} = req.body
         let newProduct = {
             name,imageUrl,price:`$${price}`,description,category,id:name
