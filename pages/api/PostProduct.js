@@ -1,6 +1,5 @@
-import fs from 'fs/promises';
-import path from 'path';
-import Products from '@/Models/PostProduct'; // Adjust the import path based on your actual model location
+import Products from "@/Models/PostProduct";
+import connectDb from "@/middleware/db"
 
 const setCorsHeaders = (res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -26,9 +25,7 @@ const handler = async (req, res) => {
       return res.status(405).json({ success: false, msg: 'Method Not Allowed' });
     }
 
-    // Log the request body for debugging
-    console.log('Request body:', req.body);
-
+    // Extract fields from req.body
     const { name, imageUrl, price, description, category } = req.body;
 
     // Create a new instance of Products model
@@ -44,11 +41,14 @@ const handler = async (req, res) => {
     // Save the product to the database
     await newProduct.save();
 
+    // Return success response
     return res.status(200).json({ success: true, msg: 'Product Posted', newProduct });
   } catch (error) {
     console.error('Error:', error);
+    // Return error response
     return res.status(500).json({ success: false, msg: 'Internal Error, Try Again Later', error: error.message });
   }
 };
 
-export default handler;
+export default connectDb(handler)
+
