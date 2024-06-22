@@ -30,47 +30,16 @@ const handler = async (req, res) => {
 
     const { name, imageUrl, price, description, category } = req.body;
 
-    if (!name || !imageUrl || !price || !description || !category) {
-      return res.status(400).json({ success: false, msg: 'Missing required fields', body: req.body });
-    }
-
-    const newProduct = {
-      name,
-      imageUrl,
-      price: `$${price}`,
-      description,
-      category,
-      id: name,
-    };
-
-    const filePath = path.resolve('./Models/products.json');
-    
-    let data;
-    try {
-      data = await fs.readFile(filePath, 'utf-8');
-    } catch (readError) {
-      console.error('Error reading file:', readError);
-      return res.status(500).json({ success: false, msg: 'Error reading file', body: req.body });
-    }
-
-    let products;
-    try {
-      products = JSON.parse(data);
-    } catch (parseError) {
-      console.error('Error parsing JSON:', parseError);
-      return res.status(500).json({ success: false, msg: 'Error parsing JSON data', body: req.body });
-    }
-
-    products.push(newProduct);
-
-    try {
-      await fs.writeFile(filePath, JSON.stringify(products, null, 2));
-    } catch (writeError) {
-      console.error('Error writing file:', writeError);
-      return res.status(500).json({ success: false, msg: 'Error writing to file', body: req.body });
-    }
-
-    return res.status(200).json({ success: true, msg: 'Product Posted', newProduct });
+    let {name,imageUrl,price,description,category} = req.body
+        let newProduct = new Products({
+            name,imageUrl,price:`$${price}`,description,category,id:name
+        })
+        // let data = await fs.readFile("./Models/products.json","utf-8")
+        // let products = JSON.parse(data)
+        // products.push(newProduct)
+        // await fs.writeFile("./Models/products.json",JSON.stringify(products,null,2))
+        await newProduct.save()
+        return res.status(200).json({success:true,msg:"Product Posted",newProduct})
   } catch (error) {
     console.error('Error:', error);
     return res.status(500).json({ success: false, msg: 'Internal Error, Try Again Later', body: req.body });
